@@ -1,0 +1,40 @@
+scikit-learn 使用手册
+在使用真实数据之前，我们可以创建一些假的数据，主要是为了演示分析，其中scikit自带的数据可以作为很多模型评估对比的数据集，使用下面的方法可以导入
+--from sklearn import datasets
+--import numpy as np
+scikit-learn中的数据包括两种数据集，一种小数据集，一种大数据集，小数据集可以使用datasets.load_*()加载，大数据集需要从网上进行下载
+//加载boston房价数据，查看数据描述
+--boston = datasets.load_boston()
+--print boston.DESC
+//加载大数据，直接下载，放在scikit_learn_data目录下，可以通过set SCIKIT_LEARN_DATA或者指定fetch的参数data_home
+//查看默认地址 --print datasets.get_data_home()
+--houring = datasets.fetch_california_houring()
+--print houring.DESC
+
+加载的数据并不是NumPy中的 arrays，而是Bunch--也就是字典{data:***，target:***}
+--X,y = boston.data,boston.target
+关于Bunch的使用，可以参见https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/datasets/base.py
+
+如何手动创建一些toy data？可以使用內建的函数 datasets.make_*?，会根据？的内容自动创建相关的数据
+	--datasets.make_biclusters
+	--datasets.make_blobs
+	--datasets.make_checkerboard
+	--datasets.make_circles
+	--datasets.make_classificatio
+我们今后使用下面的方式去减少书写的内容，当然如果你乐意的话，做你自己！
+>>> import sklearn.datasets as d
+>>> import numpy as np
+那么我们在学习中，经常会使用的，需要生成什么的数据呢？
+1、肯定是回归数据啦
+>>> reg_data = d.make_regression()
+默认生成100*100的X，也就是说有100个样本，每个样本100个特征，但是只有10个有效特征，同时有100个label，我们可以使用下面的方式修改数据
+>>> complex_reg_data = d.make_regression(1000, 10, 5, 2, 1.0)//1000个样本，10个特征，5个有效特征，偏倚因子0.1，两个target
+>>> complex_reg_data[0].shape
+(1000, 10)
+2、不平衡分类数据，平衡的意义不大 参加http://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html
+其中包括了，一共有多少数据，数据有多少特征，多少个有效特征，多少个冗余特征，多少个重复特征，多少个随机特征，多少个类，每一个类多少簇。。。
+>>> classification_set = d.make_classification(weights=[0.1])
+>>> np.bincount(classification_set[1])
+array([10, 90])
+3、针对K-means算法的
+>>> blobs = d.make_blobs()
